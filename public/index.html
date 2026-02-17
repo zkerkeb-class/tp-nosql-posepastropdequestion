@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon Devinette</title>
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-nav">
+                <div>
+                    <h1>🎮 C'est qui ??</h1>
+                    <p>Devinez le pokémon en fonction de ses stats !</p>
+                </div>
+                <div class="nav-buttons">
+                    <a href="/profile.html" class="btn-nav">👤 Profil</a>
+                    <a href="/database.html" class="btn-nav">📚 Base de Données</a>
+                    <button class="btn-nav btn-logout" onclick="logout()">🚪 Déconnexion</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="game-wrapper">
+            <!-- Panneau de stats -->
+            <div class="stats-panel">
+                <h2>🔍 Indices Progressifs</h2>
+                <div id="revealedInfosPanel" class="revealed-panel"></div>
+                <button id="btnHint" class="btn-hint" onclick="getHint()">💡 Révéler un indice</button>
+            </div>
+
+            <!-- Panneau de jeu -->
+            <div class="game-panel">
+                <div id="pokemonImage" class="pokemon-image-container"></div>
+
+                <div class="answer-section">
+                    <input 
+                        type="text" 
+                        id="answerInput" 
+                        placeholder="Tapez le nom du pokémon (FR)..."
+                        autocomplete="off"
+                    >
+                    <button class="btn-submit" onclick="checkAnswer()">✓ Vérifier</button>
+                </div>
+
+                <div class="feedback-section">
+                    <div id="feedback" class="feedback"></div>
+                </div>
+
+                <div class="score-section">
+                    <div class="score-item">
+                        <span class="score-label">Score:</span>
+                        <span id="score" class="score-value">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Tentatives:</span>
+                        <span id="attempts" class="score-value">0</span>
+                    </div>
+                    <div class="score-item">
+                        <span class="score-label">Taux de réussite:</span>
+                        <span id="winRate" class="score-value">0%</span>
+                    </div>
+                </div>
+
+                <button class="btn-next" onclick="nextPokemon()">➜ Pokémon suivant</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
