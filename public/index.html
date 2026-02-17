@@ -9,73 +9,30 @@
 <body>
     <div class="container">
         <header>
-            <h1>🎮 Pokémon Devinette</h1>
-            <p>Devinez le pokémon en fonction de ses stats !</p>
+            <div class="header-nav">
+                <div>
+                    <h1>🎮 C'est qui ??</h1>
+                    <p>Devinez le pokémon en fonction de ses stats !</p>
+                </div>
+                <div class="nav-buttons">
+                    <a href="/profile.html" class="btn-nav">👤 Profil</a>
+                    <a href="/database.html" class="btn-nav">📚 Base de Données</a>
+                    <button class="btn-nav btn-logout" onclick="logout()">🚪 Déconnexion</button>
+                </div>
+            </div>
         </header>
 
         <div class="game-wrapper">
             <!-- Panneau de stats -->
             <div class="stats-panel">
-                <h2>Stats du Pokémon</h2>
-                <div class="stat">
-                    <label>ID:</label>
-                    <span id="statId">???</span>
-                </div>
-                <div class="stat">
-                    <label>Type:</label>
-                    <span id="statType">???</span>
-                </div>
-                <div class="stat">
-                    <label>HP:</label>
-                    <div class="bar">
-                        <div id="barHP" class="bar-fill" style="width: 0%"></div>
-                        <span id="statHP">0</span>
-                    </div>
-                </div>
-                <div class="stat">
-                    <label>Attaque:</label>
-                    <div class="bar">
-                        <div id="barAttack" class="bar-fill" style="width: 0%"></div>
-                        <span id="statAttack">0</span>
-                    </div>
-                </div>
-                <div class="stat">
-                    <label>Défense:</label>
-                    <div class="bar">
-                        <div id="barDefense" class="bar-fill" style="width: 0%"></div>
-                        <span id="statDefense">0</span>
-                    </div>
-                </div>
-                <div class="stat">
-                    <label>Attaque Spé:</label>
-                    <div class="bar">
-                        <div id="barSpA" class="bar-fill" style="width: 0%"></div>
-                        <span id="statSpA">0</span>
-                    </div>
-                </div>
-                <div class="stat">
-                    <label>Défense Spé:</label>
-                    <div class="bar">
-                        <div id="barSpD" class="bar-fill" style="width: 0%"></div>
-                        <span id="statSpD">0</span>
-                    </div>
-                </div>
-                <div class="stat">
-                    <label>Vitesse:</label>
-                    <div class="bar">
-                        <div id="barSpeed" class="bar-fill" style="width: 0%"></div>
-                        <span id="statSpeed">0</span>
-                    </div>
-                </div>
+                <h2>🔍 Indices Progressifs</h2>
+                <div id="revealedInfosPanel" class="revealed-panel"></div>
+                <button id="btnHint" class="btn-hint" onclick="getHint()">💡 Révéler un indice</button>
             </div>
 
             <!-- Panneau de jeu -->
             <div class="game-panel">
-                <div class="hints-section">
-                    <h3>Indices</h3>
-                    <button id="btnHint" class="btn-hint" onclick="getHint()">💡 Obtenir un indice</button>
-                    <p id="hintText" class="hint-text"></p>
-                </div>
+                <div id="pokemonImage" class="pokemon-image-container"></div>
 
                 <div class="answer-section">
                     <input 
@@ -110,9 +67,6 @@
             </div>
         </div>
 
-        <footer>
-            <p>Données de <a href="https://pokeapi.co/" target="_blank">PokéAPI</a></p>
-        </footer>
     </div>
 
     <script src="game.js"></script>

@@ -36,23 +36,60 @@ header {
     color: white;
     margin-bottom: 40px;
     animation: slideDown 0.6s ease-out;
+}
+
+.header-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 20px;
+}
+
+.header-nav > div:first-child {
+    flex: 1;
+    text-align: center;
 }
 
 header h1 {
     font-size: 3em;
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-    flex: 1;
 }
 
 header p {
     font-size: 1.2em;
     opacity: 0.9;
-    flex: 1;
-    text-align: center;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btn-nav {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.btn-nav:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-logout {
+    background-color: rgba(212, 48, 49, 0.3);
+}
+
+.btn-logout:hover {
+    background-color: rgba(212, 48, 49, 0.5);
 }
 
 .user-info {
@@ -144,6 +181,34 @@ header p {
     color: var(--color-text);
 }
 
+.revealed-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%);
+    border-left: 4px solid var(--color-warning);
+    border-radius: 8px;
+    font-size: 1em;
+    color: var(--color-text);
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
 .bar {
     display: flex;
     align-items: center;
@@ -206,6 +271,36 @@ header p {
     min-height: 40px;
     display: flex;
     align-items: center;
+    margin-bottom: 15px;
+}
+
+.pokemon-image-container {
+    text-align: center;
+    margin-bottom: 20px;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pokemon-img {
+    max-width: 100%;
+    height: auto;
+    max-height: 200px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    animation: popIn 0.5s ease-out;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .answer-section {

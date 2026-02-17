@@ -5,20 +5,37 @@ let score = 0;
 let totalAttempts = 0;
 let correctAnswers = 0;
 let currentAttempts = 0;
-let hintsUsed = 0;
-let maxHints = 3;
+let revealedInfos = 1; // Commencer avec 1 info
 let currentUser = null;
 let userToken = null;
+let shuffledInfos = []; // Indices mélangés pour le pokémon courant
 
 const API_URL = 'http://localhost:3000/api/pokemons';
 const AUTH_API_URL = 'http://localhost:3000/api/auth';
 
-// Indices disponibles par étape
-const hints = [
-    { text: 'Indice: ', getReason: (p) => `La première lettre est "${p.name.french.charAt(0).toUpperCase()}"` },
-    { text: 'Indice: ', getReason: (p) => `Le pokémon a ${p.type.length} type(s): ${p.type.join(', ')}` },
-    { text: 'Indice: ', getReason: (p) => `Le nom complet a ${p.name.french.length} lettres` },
+// Infos progressives (révélées une par une à chaque mauvaise réponse)
+const progressiveInfos = [
+    (p) => `Première lettre: <strong>${p.name.french.charAt(0).toUpperCase()}</strong>`,
+    (p) => `Type(s): <strong>${p.type.join(', ')}</strong>`,
+    (p) => `Nombre de lettres: <strong>${p.name.french.length}</strong>`,
+    (p) => `HP: <strong>${p.base.HP}</strong>`,
+    (p) => `Attaque: <strong>${p.base.Attack}</strong>`,
+    (p) => `Défense: <strong>${p.base.Defense}</strong>`,
+    (p) => `Attaque Spé: <strong>${p.base.SpecialAttack}</strong>`,
+    (p) => `Défense Spé: <strong>${p.base.SpecialDefense}</strong>`,
+    (p) => `Vitesse: <strong>${p.base.Speed}</strong>`,
+    (p) => `ID: <strong>#${p.id}</strong>`,
 ];
+
+// Fonction pour mélanger un tableau (Fisher-Yates shuffle)
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
 
 // Initialiser le jeu
 async function initGame() {
@@ -79,67 +96,46 @@ function nextPokemon() {
 
     currentPokemon = allPokemons[Math.floor(Math.random() * allPokemons.length)];
     currentAttempts = 0;
-    hintsUsed = 0;
+    revealedInfos = 1; // Recommencer avec 1 seule info
+
+    // Mélanger les indices pour un ordre aléatoire des infos
+    shuffledInfos = shuffleArray(Array.from({length: progressiveInfos.length}, (_, i) => i));
 
     // Réinitialiser l'interface
     document.getElementById('answerInput').value = '';
     document.getElementById('answerInput').disabled = false;
     document.getElementById('feedback').textContent = '';
     document.getElementById('feedback').className = 'feedback';
-    document.getElementById('hintText').textContent = '';
-    document.getElementById('btnHint').disabled = false;
+    document.getElementById('pokemonImage').innerHTML = '';
     document.getElementById('answerInput').focus();
 
-    displayStats();
-}
-
-// Afficher les stats du pokémon courant
-function displayStats() {
-    if (!currentPokemon) return;
-
-    const { id, type, base, name } = currentPokemon;
-    const maxStat = 150; // Valeur max pour les barres
-
-    document.getElementById('statId').textContent = `#${id}`;
-    document.getElementById('statType').textContent = type.join(', ');
-    
-    document.getElementById('statHP').textContent = base.HP;
-    document.getElementById('barHP').style.width = (base.HP / maxStat) * 100 + '%';
-
-    document.getElementById('statAttack').textContent = base.Attack;
-    document.getElementById('barAttack').style.width = (base.Attack / maxStat) * 100 + '%';
-
-    document.getElementById('statDefense').textContent = base.Defense;
-    document.getElementById('barDefense').style.width = (base.Defense / maxStat) * 100 + '%';
-
-    document.getElementById('statSpA').textContent = base.SpecialAttack;
-    document.getElementById('barSpA').style.width = (base.SpecialAttack / maxStat) * 100 + '%';
-
-    document.getElementById('statSpD').textContent = base.SpecialDefense;
-    document.getElementById('barSpD').style.width = (base.SpecialDefense / maxStat) * 100 + '%';
-
-    document.getElementById('statSpeed').textContent = base.Speed;
-    document.getElementById('barSpeed').style.width = (base.Speed / maxStat) * 100 + '%';
+    displayRevealedInfos();
 }
 
 // Obtenir un indice
 function getHint() {
     if (!currentPokemon) return;
 
-    if (hintsUsed >= maxHints) {
-        document.getElementById('hintText').textContent = '❌ Plus d\'indices disponibles !';
-        return;
+    if (revealedInfos < progressiveInfos.length) {
+        revealedInfos++;
+        displayRevealedInfos();
+    } else {
+        // Tous les indices sont révélés
+        document.getElementById('revealedInfosPanel').innerHTML += '<div class="info-item" style="color: #999;">✅ Tous les indices sont révélés !</div>';
+    }
+}
+
+// Afficher les infos progressives révélées
+function displayRevealedInfos() {
+    if (!currentPokemon) return;
+
+    let infosHTML = '';
+    for (let i = 0; i < revealedInfos && i < progressiveInfos.length; i++) {
+        const infoIndex = shuffledInfos[i]; // Utiliser l'index mélangé
+        infosHTML += `<div class="info-item">📌 ${progressiveInfos[infoIndex](currentPokemon)}</div>`;
     }
 
-    const hint = hints[hintsUsed];
-    const hintContent = hint.getReason(currentPokemon);
-    document.getElementById('hintText').textContent = hint.text + hintContent;
-
-    hintsUsed++;
-
-    if (hintsUsed >= maxHints) {
-        document.getElementById('btnHint').disabled = true;
-    }
+    document.getElementById('revealedInfosPanel').innerHTML = infosHTML;
 }
 
 // Vérifier la réponse
@@ -163,18 +159,28 @@ function checkAnswer() {
         feedbackEl.className = 'feedback success';
         feedbackEl.innerHTML = `
             ✅ <strong>Correct !</strong> Le pokémon est <strong>${currentPokemon.name.french}</strong> !<br>
-            Points gagnés: <strong>+${points}</strong>
+            <span style="font-size: 0.9em;">Tentatives: ${currentAttempts} | Points: <strong>+${points}</strong></span>
+        `;
+
+        // Afficher l'image du pokémon
+        document.getElementById('pokemonImage').innerHTML = `
+            <img src="${currentPokemon.image}" alt="${currentPokemon.name.french}" class="pokemon-img">
         `;
 
         document.getElementById('answerInput').disabled = true;
-        document.getElementById('btnHint').disabled = true;
 
         // Sauvegarder les stats sur le serveur
         saveStats(true, points);
         updateScore();
     } else {
+        // Révéler une nouvelle info automatiquement
+        if (revealedInfos < progressiveInfos.length) {
+            revealedInfos++;
+            displayRevealedInfos();
+        }
+
         feedbackEl.className = 'feedback error';
-        feedbackEl.textContent = `❌ Mauvaise réponse ! Tentative ${currentAttempts}/${maxHints + 1}`;
+        feedbackEl.textContent = `❌ Mauvaise réponse ! ${revealedInfos < progressiveInfos.length ? `(${parseInt((revealedInfos / progressiveInfos.length) * 100)}% d'infos révélées)` : '(toutes les infos sont révélées)'}`;
     }
 }
 
@@ -277,4 +283,9 @@ function revealName() {
     }
 
     return revealed;
+}
+// Déconnexion
+function logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/login.html';
 }
