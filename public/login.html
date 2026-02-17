@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Pokémon Devinette</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1>🎮 Pokémon Devinette</h1>
+            
+            <!-- Formulaire de connexion -->
+            <div id="loginForm" class="form-section active">
+                <h2>Connexion</h2>
+                <div class="form-group">
+                    <label for="loginUsername">Nom d'utilisateur:</label>
+                    <input type="text" id="loginUsername" placeholder="votre_pseudo">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe:</label>
+                    <input type="password" id="loginPassword" placeholder="votre_mot_de_passe">
+                </div>
+                <button class="btn-submit" onclick="handleLogin()">✓ Se connecter</button>
+                <p class="form-switch">
+                    Pas encore de compte ? 
+                    <a href="#" onclick="switchForm('register')">S'inscrire</a>
+                </p>
+            </div>
+
+            <!-- Formulaire d'inscription -->
+            <div id="registerForm" class="form-section">
+                <h2>Inscription</h2>
+                <div class="form-group">
+                    <label for="registerUsername">Nom d'utilisateur:</label>
+                    <input type="text" id="registerUsername" placeholder="votre_pseudo">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mot de passe:</label>
+                    <input type="password" id="registerPassword" placeholder="votre_mot_de_passe">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword2">Confirmer le mot de passe:</label>
+                    <input type="password" id="registerPassword2" placeholder="confirmez_votre_mot_de_passe">
+                </div>
+                <button class="btn-submit" onclick="handleRegister()">✓ S'inscrire</button>
+                <p class="form-switch">
+                    Vous avez un compte ? 
+                    <a href="#" onclick="switchForm('login')">Se connecter</a>
+                </p>
+            </div>
+
+            <!-- Messages de feedback -->
+            <div id="feedback" class="feedback"></div>
+        </div>
+
+        <footer>
+            <p>Pokémon Devinette - Testez vos connaissances 🔥 ⚡ 💧</p>
+        </footer>
+    </div>
+
+    <script src="auth.js"></script>
+</body>
+</html>

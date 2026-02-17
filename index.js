@@ -19,7 +19,7 @@ app.use('/assets', express.static('assets')); // Permet d'accéder aux fichiers 
 app.use(express.static('public')); // Servir les fichiers statiques du jeu (HTML, CSS, JS)
 
 app.get('/', (req, res) => {
-    res.sendFile('public/index.html', { root: '.' });
+    res.sendFile('public/login.html', { root: '.' });
 });
 
 // Router pour les routes /api/pokemons

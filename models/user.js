@@ -11,6 +11,41 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    // Stats du jeu
+    gameStats: {
+        totalAttempts: {
+            type: Number,
+            default: 0,
+        },
+        correctAnswers: {
+            type: Number,
+            default: 0,
+        },
+        totalScore: {
+            type: Number,
+            default: 0,
+        },
+        averageAttemptsPerPokemon: {
+            type: Number,
+            default: 0,
+        },
+        winrate: {
+            type: Number,
+            default: 0,
+        },
+        lastGameDate: {
+            type: Date,
+            default: null,
+        },
+        streakCorrect: {
+            type: Number,
+            default: 0,
+        },
+        bestStreak: {
+            type: Number,
+            default: 0,
+        },
+    },
 }, { timestamps: true });
 
 // Middleware pre-save pour hasher le mot de passe avant l'enregistrement

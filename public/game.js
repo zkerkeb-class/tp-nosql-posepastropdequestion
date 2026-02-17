@@ -7,8 +7,11 @@ let correctAnswers = 0;
 let currentAttempts = 0;
 let hintsUsed = 0;
 let maxHints = 3;
+let currentUser = null;
+let userToken = null;
 
 const API_URL = 'http://localhost:3000/api/pokemons';
+const AUTH_API_URL = 'http://localhost:3000/api/auth';
 
 // Indices disponibles par étape
 const hints = [
@@ -19,6 +22,13 @@ const hints = [
 
 // Initialiser le jeu
 async function initGame() {
+    // Vérifier l'authentification
+    userToken = localStorage.getItem('token');
+    if (!userToken) {
+        window.location.href = '/login.html';
+        return;
+    }
+
     try {
         console.log('Chargement des pokémons...');
         const response = await fetch(`${API_URL}?limit=100`);
@@ -27,6 +37,7 @@ async function initGame() {
         if (data.data && Array.isArray(data.data)) {
             allPokemons = data.data;
             console.log(`${allPokemons.length} pokémons chargés`);
+            loadUserProfile();
             nextPokemon();
         } else {
             console.error('Format de réponse inattendu:', data);
@@ -35,6 +46,27 @@ async function initGame() {
     } catch (error) {
         console.error('Erreur:', error);
         alert('Impossible de charger les pokémons. Assurez-vous que le serveur est en cours d\'exécution sur port 3000');
+    }
+}
+
+// Charger le profil utilisateur
+async function loadUserProfile() {
+    try {
+        const response = await fetch(`${AUTH_API_URL}/profile`, {
+            headers: {
+                'Authorization': `Bearer ${userToken}`,
+            },
+        });
+
+        if (response.ok) {
+            currentUser = await response.json();
+            updateUserDisplay();
+        } else if (response.status === 401) {
+            localStorage.removeItem('token');
+            window.location.href = '/login.html';
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement du profil:', error);
     }
 }
 
@@ -51,6 +83,7 @@ function nextPokemon() {
 
     // Réinitialiser l'interface
     document.getElementById('answerInput').value = '';
+    document.getElementById('answerInput').disabled = false;
     document.getElementById('feedback').textContent = '';
     document.getElementById('feedback').className = 'feedback';
     document.getElementById('hintText').textContent = '';
@@ -136,6 +169,8 @@ function checkAnswer() {
         document.getElementById('answerInput').disabled = true;
         document.getElementById('btnHint').disabled = true;
 
+        // Sauvegarder les stats sur le serveur
+        saveStats(true, points);
         updateScore();
     } else {
         feedbackEl.className = 'feedback error';
@@ -152,6 +187,62 @@ function updateScore() {
         ? Math.round((correctAnswers / totalAttempts) * 100)
         : 0;
     document.getElementById('winRate').textContent = winRate + '%';
+}
+
+// Mettre à jour l'affichage du profil utilisateur
+function updateUserDisplay() {
+    if (currentUser) {
+        let userDisplay = document.querySelector('.user-info');
+        if (!userDisplay) {
+            userDisplay = document.createElement('div');
+            userDisplay.className = 'user-info';
+            document.querySelector('header').appendChild(userDisplay);
+        }
+        userDisplay.innerHTML = `
+            <span>👤 ${currentUser.username}</span>
+            <a href="/profile.html">📊 Profil</a>
+            <button onclick="handleLogout()" class="btn-logout">🚪 Déconnexion</button>
+        `;
+    }
+}
+
+// Sauvegarder les stats sur le serveur
+async function saveStats(correct = false, pointsGained = 0) {
+    if (!userToken || !currentUser) return;
+
+    try {
+        const response = await fetch(`${AUTH_API_URL}/stats`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${userToken}`,
+            },
+            body: JSON.stringify({
+                correctAnswers: correct ? 1 : 0,
+                totalAttempts: currentAttempts,
+                pointsGained,
+                correct,
+            }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Stats sauvegardées:', data);
+        } else {
+            console.error('Erreur lors de la sauvegarde des stats:', response.status);
+        }
+    } catch (error) {
+        console.error('Erreur lors de la sauvegarde des stats:', error);
+    }
+}
+
+// Déconnexion
+function handleLogout() {
+    if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        window.location.href = '/login.html';
+    }
 }
 
 // Gestion du clavier (Entrée pour valider)
